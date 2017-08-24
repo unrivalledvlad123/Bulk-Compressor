@@ -24,6 +24,7 @@ namespace Bulk_Compressor
             InitializeComponent();
             SetGridColomns();
             btnAdd.Enabled = false;
+
         }
 
         private void tbStart_Click(object sender, EventArgs e)
