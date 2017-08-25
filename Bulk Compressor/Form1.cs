@@ -146,7 +146,7 @@ namespace Bulk_Compressor
                     resizeImage(file, tbOutput.Text + @"\" + row.Key, output.Last(), (int) tbHeight.Value,
                         (int) tbQuality.Value);
                     progressCounter++;
-                    if (progressCounter % 5 == 0)
+                    if (progressCounter % 100 == 0)
                     {
                         float progressPercent = (progressCounter / totalCount) * 100;
                         progressBar.Value = (int) progressPercent;
@@ -185,9 +185,6 @@ namespace Bulk_Compressor
             int newHeight = Convert.ToInt32(image.Width * ratio);
             int newWidth = Convert.ToInt32(image.Height * ratio);
 
-            int posX = Convert.ToInt32((newwidth - (image.Width * ratio)) / 2);
-            int posY = Convert.ToInt32((canvasHeight - (image.Height * ratio)) / 2);
-
             graphic.Clear(Color.Black);
             graphic.DrawImage(image, 0, 0, newHeight, newWidth);
 
@@ -196,6 +193,9 @@ namespace Bulk_Compressor
             encoderParameters = new EncoderParameters(1);
             encoderParameters.Param[0] = new EncoderParameter(Encoder.Quality, quality);
             thumbnail.Save(newPath + @"\" +originalFilename, info[1], encoderParameters);
+            graphic.Dispose();
+            thumbnail.Dispose();
+            image.Dispose();
         }
 
         private void tbOutputName_TextChanged(object sender, EventArgs e)
