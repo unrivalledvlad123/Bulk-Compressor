@@ -24,6 +24,7 @@ namespace Bulk_Compressor
             InitializeComponent();
             SetGridColomns();
             btnAdd.Enabled = false;
+           // resizeImage(@"C:\Users\vlad\Desktop\Games\New folder\noncomp.jpg", @"C:\Users\vlad\Desktop\Games\New folder\New folder","noncomp.jpg",640,75);
 
         }
 
@@ -145,7 +146,7 @@ namespace Bulk_Compressor
                     resizeImage(file, tbOutput.Text + @"\" + row.Key, output.Last(), (int) tbHeight.Value,
                         (int) tbQuality.Value);
                     progressCounter++;
-                    if (progressCounter % 5 == 0)
+                    if (progressCounter % 100 == 0)
                     {
                         float progressPercent = (progressCounter / totalCount) * 100;
                         progressBar.Value = (int) progressPercent;
@@ -163,38 +164,38 @@ namespace Bulk_Compressor
         {
             Image image = Image.FromFile(fullPath);
             // must calculate width before that based on hights
-            var originalHeight1 = image.Height;
-            var ratio1 = originalHeight1 / canvasHeight;
-            var newwidth = 0;
-            newwidth = ratio1 == 0 ? image.Width / 1 : image.Width / ratio1;
+            float originalHeight1 = image.Width;
+            float ratio1 = originalHeight1 / canvasHeight;
+            float newwidth = 0;
+            newwidth = ratio1 == 0 ? image.Height / 1 : image.Height / ratio1;
             
-            Image thumbnail = new Bitmap(newwidth, canvasHeight);
+            Image thumbnail = new Bitmap(canvasHeight,(int) newwidth);
             Graphics graphic = Graphics.FromImage(thumbnail);
             graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
             graphic.SmoothingMode = SmoothingMode.HighQuality;
             graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
             graphic.CompositingQuality = CompositingQuality.HighQuality;
 
-            double ratioX = (double)newwidth / (double) image.Width;
-            double ratioY = (double) canvasHeight / (double) image.Height;
+            double ratioX = (double)newwidth / (double) image.Height;
+            double ratioY = (double) canvasHeight / (double) image.Width;
 
             double ratio = ratioX < ratioY ? ratioX : ratioY;
 
 
-            int newHeight = Convert.ToInt32(image.Height * ratio);
-            int newWidth = Convert.ToInt32(image.Width * ratio);
-
-            int posX = Convert.ToInt32((newwidth - (image.Width * ratio)) / 2);
-            int posY = Convert.ToInt32((canvasHeight - (image.Height * ratio)) / 2);
+            int newHeight = Convert.ToInt32(image.Width * ratio);
+            int newWidth = Convert.ToInt32(image.Height * ratio);
 
             graphic.Clear(Color.Black);
-            graphic.DrawImage(image, posX, posY, newWidth, newHeight);
+            graphic.DrawImage(image, 0, 0, newHeight, newWidth);
 
             ImageCodecInfo[] info = ImageCodecInfo.GetImageEncoders();
             EncoderParameters encoderParameters;
             encoderParameters = new EncoderParameters(1);
             encoderParameters.Param[0] = new EncoderParameter(Encoder.Quality, quality);
             thumbnail.Save(newPath + @"\" +originalFilename, info[1], encoderParameters);
+            graphic.Dispose();
+            thumbnail.Dispose();
+            image.Dispose();
         }
 
         private void tbOutputName_TextChanged(object sender, EventArgs e)
