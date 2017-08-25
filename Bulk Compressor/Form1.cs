@@ -18,6 +18,7 @@ namespace Bulk_Compressor
         public static List<string> AllDirectoriesFull = new List<string>();
         public static Dictionary<string,List<string>> StructuredCollection = new Dictionary<string, List<string>>();
         public static Dictionary<string, List<string>> StructuredFiles = new Dictionary<string, List<string>>();
+        public static Dictionary<string, int> Dict = new Dictionary<string, int>();
 
         public Form1()
         {
@@ -154,6 +155,7 @@ namespace Bulk_Compressor
                         progressBar.Update();
                     }
                 }
+                Dict.Clear();
             }
             progressBar.Value = 100;
             labelProgress.Text = "Done!";
@@ -192,7 +194,18 @@ namespace Bulk_Compressor
             EncoderParameters encoderParameters;
             encoderParameters = new EncoderParameters(1);
             encoderParameters.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-            thumbnail.Save(newPath + @"\" +originalFilename, info[1], encoderParameters);
+            if (Dict.ContainsKey(newPath + @"\" + originalFilename))
+            {
+                string[] temp = originalFilename.Split(Convert.ToChar("."));
+                thumbnail.Save(newPath + @"\" +temp[0] + string.Format("({0}).", Dict[newPath + @"\" + originalFilename]) + temp.Last(), info[1],
+                    encoderParameters);
+                Dict[newPath + @"\" + originalFilename] = Dict[newPath + @"\" + originalFilename] + 1;
+            }
+            else
+            {
+              thumbnail.Save(newPath + @"\" +originalFilename, info[1], encoderParameters);  
+                Dict.Add(newPath + @"\" + originalFilename,1);
+            }
             graphic.Dispose();
             thumbnail.Dispose();
             image.Dispose();
