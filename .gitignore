@@ -64,6 +64,7 @@ Thumbs.db
 [Bb]in
 [Dd]ebug*/
 **/bin/
+*/bin/
 *.sbr
 obj/
 [Rr]elease*/
